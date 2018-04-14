@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-
+import { Link, withRouter } from 'react-router-dom';
 import { auth } from '../../firebase';
 import * as routes from '../../constants/routes';
+
+
+import { Form, Icon, Input, Button, Checkbox } from 'antd';
+const FormItem = Form.Item;
+
 
 const PasswordForgetPage = () =>
   <div>
@@ -29,6 +33,13 @@ class PasswordForgetForm extends Component {
   onSubmit = (event) => {
     const { email } = this.state;
 
+
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+    });
+
     auth.doPasswordReset(email)
       .then(() => {
         this.setState(() => ({ ...INITIAL_STATE }));
@@ -40,6 +51,7 @@ class PasswordForgetForm extends Component {
     event.preventDefault();
   }
 
+
   render() {
     const {
       email,
@@ -48,32 +60,46 @@ class PasswordForgetForm extends Component {
 
     const isInvalid = email === '';
 
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          value={this.state.email}
-          onChange={event => this.setState(updateByPropertyName('email', event.target.value))}
-          type="text"
-          placeholder="Email Address"
-        />
-        <button disabled={isInvalid} type="submit">
-          Reset My Password
-        </button>
+    const styles = {
+      formStyle : {
+        maxWidth:'400px',
+        margin:'auto', 
+        marginTop:'20vh', 
+        padding:'50px',
+        borderRadius:'9px',
+        boxShadow: '2px 3px 68px -4px rgba(0,0,0,0.28)'
+      }
+    }
+    const { getFieldDecorator } = this.props.form;
 
-        { error && <p>{error.message}</p> }
-      </form>
+    return (
+      <Form onSubmit={this.onSubmit} style={styles.formStyle} >
+        <FormItem
+          label="E-mail"
+        >
+          {getFieldDecorator('email', {
+            rules: [{
+              type: 'email', message: 'The input is not valid E-mail!',
+            }, {
+              required: true, message: 'Please input your E-mail!',
+            }],
+          })(
+            <Input onChange={event => this.setState(updateByPropertyName('email', event.target.value))} />
+          )}
+        </FormItem>
+        <FormItem style={{margin:'auto'}}>
+          <Button type="primary" htmlType="submit">Reset Password</Button>
+          <Button type="primary" style={{margin:'0 10px'}}><Link to={routes.SIGN_IN}>Back</Link></Button>
+        </FormItem>
+      </Form>
     );
   }
 }
 
-const PasswordForgetLink = () =>
-  <p>
-    <Link to={routes.PASSWORD_FORGET}>Forgot Password?</Link>
-  </p>
+const WrappedPasswordForgetForm = Form.create()(PasswordForgetForm);
 
-export default PasswordForgetPage;
+export default withRouter(WrappedPasswordForgetForm);
 
 export {
-  PasswordForgetForm,
-  PasswordForgetLink,
+  WrappedPasswordForgetForm
 };

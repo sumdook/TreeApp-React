@@ -4,8 +4,14 @@ import {
   withRouter,
 } from 'react-router-dom';
 
+import { Form, Icon, Input, Button, Checkbox } from 'antd';
+
+
+
 import { auth, db } from '../../firebase';
 import * as routes from '../../constants/routes';
+
+const FormItem = Form.Item;
 
 const SignUpPage = ({ history }) =>
   <div>
@@ -43,6 +49,12 @@ class SignUpForm extends Component {
       history,
     } = this.props;
 
+     this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+    });
+
     auth.doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
 
@@ -64,6 +76,21 @@ class SignUpForm extends Component {
     event.preventDefault();
   }
 
+  compareToFirstPassword = (rule, value, callback) => {
+    const form = this.props.form;
+    if (value && value !== form.getFieldValue('password')) {
+      callback('Two passwords that you enter is inconsistent!');
+    } else {
+      callback();
+    }
+  }
+
+  handleConfirmBlur = (e) => {
+    const value = e.target.value;
+    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+  }
+
+
   render() {
     const {
       username,
@@ -79,52 +106,117 @@ class SignUpForm extends Component {
       username === '' ||
       email === '';
 
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          value={username}
-          onChange={event => this.setState(updateByPropertyName('username', event.target.value))}
-          type="text"
-          placeholder="Full Name"
-        />
-        <input
-          value={email}
-          onChange={event => this.setState(updateByPropertyName('email', event.target.value))}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          value={passwordOne}
-          onChange={event => this.setState(updateByPropertyName('passwordOne', event.target.value))}
-          type="password"
-          placeholder="Password"
-        />
-        <input
-          value={passwordTwo}
-          onChange={event => this.setState(updateByPropertyName('passwordTwo', event.target.value))}
-          type="password"
-          placeholder="Confirm Password"
-        />
-        <button disabled={isInvalid} type="submit">
-          Sign Up
-        </button>
+    const { getFieldDecorator } = this.props.form;
 
-        { error && <p>{error.message}</p> }
-      </form>
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 8 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 },
+      },
+    };
+    const tailFormItemLayout = {
+      wrapperCol: {
+        xs: {
+          span: 24,
+          offset: 0,
+        },
+        sm: {
+          span: 16,
+          offset: 8,
+        },
+      },
+    };
+
+    const styles = {
+      formStyle : {
+        maxWidth:'500px',
+        margin:'auto', 
+        marginTop:'20vh', 
+        padding:'50px',
+        borderRadius:'9px',
+        boxShadow: '2px 3px 68px -4px rgba(0,0,0,0.28)'
+      }
+    }
+
+    return (
+      <Form onSubmit={this.onSubmit} style={styles.formStyle}>
+          <FormItem
+          {...formItemLayout}
+          label={(
+            <span>
+              Name&nbsp;
+            </span>
+          )}
+        >
+          {getFieldDecorator('nickname', {
+            rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
+          })(
+            <Input onChange={event => this.setState(updateByPropertyName('username', event.target.value))} />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="E-mail"
+        >
+          {getFieldDecorator('email', {
+            rules: [{
+              type: 'email', message: 'The input is not valid E-mail!',
+            }, {
+              required: true, message: 'Please input your E-mail!',
+            }],
+          })(
+            <Input onChange={event => this.setState(updateByPropertyName('email', event.target.value))} />
+          )}
+        </FormItem>
+
+        <FormItem
+          {...formItemLayout}
+          label="Password"
+        >
+          {getFieldDecorator('password', {
+            rules: [{
+              required: true, message: 'Please input your password!',
+            }, {
+              validator: this.validateToNextPassword,
+            }],
+          })(
+            <Input onChange={event => this.setState(updateByPropertyName('passwordOne', event.target.value))} type="password" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Confirm Password"
+        >
+          {getFieldDecorator('confirm', {
+            rules: [{
+              required: true, message: 'Please confirm your password!',
+            }, {
+              validator: this.compareToFirstPassword,
+            }],
+          })(
+            <Input onChange={event => this.setState(updateByPropertyName('passwordTwo', event.target.value))} type="password" onBlur={this.handleConfirmBlur} />
+          )}
+        </FormItem>
+        <FormItem {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">Register</Button>
+          <Button type="primary" style={{margin:'0 20px'}}><Link to={routes.SIGN_IN}>Back</Link></Button>
+        </FormItem>
+
+        
+      </Form>
     );
   }
 }
 
-const SignUpLink = () =>
-  <p>
-    Don't have an account?
-    {' '}
-    <Link to={routes.SIGN_UP}>Sign Up</Link>
-  </p>
 
-export default withRouter(SignUpPage);
+const WrappedSignUpForm = Form.create()(SignUpForm);
+
+export default withRouter(WrappedSignUpForm);
 
 export {
   SignUpForm,
-  SignUpLink,
 };
