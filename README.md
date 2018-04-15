@@ -5,8 +5,8 @@
 
 ## Installation
 * `Install latest node.js version`
-* `git clone git@github.com:rwieruch/react-firebase-authentication.git`
-* `cd react-firebase-authentication`
+* `git clone https://github.com/soumikcv/TreeApp-React.git`
+* `cd TreeApp-React`
 * `npm install`
 * `npm start`
 * visit http://localhost:3000/
