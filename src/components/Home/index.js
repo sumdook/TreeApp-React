@@ -75,7 +75,7 @@ class HomePage extends Component {
               <Card title="Latest Updates"style={{ width: 300, margin: "20px 50px" }}>
                 <p>Humidity: {this.state.data[key].latest.HUMIDITY}</p>
                 <p>Temperature: {this.state.data[key].latest.TEMPERATURE}</p>
-                <p>Time: {this.state.data[key].latest.TIME} </p>
+                <p>Time: {new Date(this.state.data[key].latest.TIME*1000).toLocaleString()} </p>
               </Card>
             </Col>
             <Col>
