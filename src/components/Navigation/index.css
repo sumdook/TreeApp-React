@@ -1,7 +1,9 @@
  .logo {
-  width: 120px;
-  height: 31px;
+  width: 80px;
+  height: 1px;
   background: rgba(255,255,255,.2);  
-  margin: 16px 28px 16px 0;
+  margin-right:20px;
+  margin-left: -20px;
   float: left;
+  color:white;
 }

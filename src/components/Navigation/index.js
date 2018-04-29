@@ -19,20 +19,13 @@ const Navigation = () =>
   </AuthUserContext.Consumer>
 
 const NavigationAuth = () =>
-  /*<ul>
-    <li><Link to={routes.LANDING}>Landing</Link></li>
-    <li><Link to={routes.}>Home</Link></li>
-    <li><Link to={routes.ACCOUNT}>Account</Link></li>
-    <li><SignOutButton /></li>
-  </ul>
-  */
 <Layout>
     <Header className="header">
-      <Link to={routes.LANDING}><div className="logo" /></Link>
+      <Link to={routes.LANDING}><div className="logo">NEA Project</div></Link>
       <Menu
         theme="dark"
         mode="horizontal"
-        defaultSelectedKeys={['2']}
+        defaultSelectedKeys={['1']}
         style={{ lineHeight: '64px' }}
       >
         <Menu.Item key="1"><Link to={routes.HOME}>Home</Link></Menu.Item>
@@ -47,11 +40,11 @@ const NavigationAuth = () =>
 const NavigationNonAuth = () =>
   <Layout>
     <Header className="header">
-      <Link to={routes.LANDING}><div className="logo" /></Link>
+      <Link to={routes.LANDING}><div className="logo">NEA Project</div></Link>
       <Menu
         theme="dark"
         mode="horizontal"
-        defaultSelectedKeys={['2']}
+        defaultSelectedKeys={['1']}
         style={{ lineHeight: '64px' }}
       >
         <Menu.Item key="1"><Link to={routes.LANDING}>Explore</Link></Menu.Item>
